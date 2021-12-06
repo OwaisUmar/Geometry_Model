@@ -1,4 +1,5 @@
 #include<math.h>
+#include<vector>
 #include "Geometry.h"
 using namespace std;
 
@@ -341,14 +342,17 @@ Scene::Scene() {
 }
 
 void Scene::addObject(std::shared_ptr<Shape> ptr) {
-	// IMPLEMENT ME
+	V.push_back(ptr);	
 }
 
 void Scene::setDrawDepth(int depth) {
-	// IMPLEMENT ME
+	Depth=depth;
 }
 
 std::ostream& operator<<(std::ostream& out, const Scene& s) {
-	// IMPLEMENT ME
+	for(auto i : s.V) {
+		
+	}
+		
 	return out;
 }

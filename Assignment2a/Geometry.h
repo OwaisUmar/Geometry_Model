@@ -2,6 +2,7 @@
 #define GEOMETRY_H_
 
 #include <iostream>
+#include <vector>
 #include <memory>
 
 class Point; // forward declaration
@@ -201,6 +202,8 @@ public:
 
 private:
 	// add any member variables you need
+	vector<shared_ptr<Shape>> V;
+	int Depth;
 
 	// Draw objects as specified in the assignment page
 friend std::ostream& operator<<(std::ostream& out, const Scene& s);
