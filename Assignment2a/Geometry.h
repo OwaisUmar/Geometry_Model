@@ -202,7 +202,7 @@ public:
 
 private:
 	// add any member variables you need
-	vector<shared_ptr<Shape>> V;
+	std::vector<std::shared_ptr<Shape>> V;
 	int Depth;
 
 	// Draw objects as specified in the assignment page

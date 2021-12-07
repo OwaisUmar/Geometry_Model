@@ -351,6 +351,17 @@ void Scene::setDrawDepth(int depth) {
 
 std::ostream& operator<<(std::ostream& out, const Scene& s) {
 	for(auto i : s.V) {
+		int x=0, y=s.HEIGHT-1;
+		while(y>=0) {
+			if(i->contains(Point(x, y)))
+				out<<'*';
+			x++;
+			if(x==s.WIDTH) {
+				out<<endl;
+				x=0;
+				y--;
+			}
+		}
 		
 	}
 		
