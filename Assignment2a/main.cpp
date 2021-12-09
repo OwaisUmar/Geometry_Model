@@ -1,9 +1,10 @@
 #include <iostream>
-#include "Geometry.h"
+#include "Geometry.cpp"
 using namespace std;
 
 int main() {
 
+	cout<<"In main\n";
 	Point p1(-1,-2);
 	Point p2(10,-2);
 	cout << p1.getX() << endl;

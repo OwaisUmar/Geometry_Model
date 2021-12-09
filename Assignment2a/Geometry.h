@@ -47,7 +47,6 @@ public:
 
 protected:
 	int depth;
-	int dimension;
 private:
 	// add any protected/private member variables you need
 };
@@ -105,8 +104,8 @@ public:
 	bool contains(const Point& p) const;
 
 private:
-	Point P;
-	Point Q;
+	Point P=Point(0, 0);
+	Point Q=Point(0, 0);
 	// add any member variables you need
 	
 };
@@ -120,6 +119,9 @@ public:
 
 	// Constructor specifying the depth d
 	TwoDShape(int d);
+
+	
+	int dim() const;
 
 	// Return the area of the object
 	virtual float area() const = 0;
@@ -146,15 +148,14 @@ public:
 
 	bool setDepth(int d);
 	int getDepth() const;
-	int dim() const;
 	void translate(float x, float y);
 	void rotate();
 	void scale(float f);
 	bool contains(const Point& p) const;
 
-protected:
-	Point P;
-	Point Q;
+private:
+	Point P=Point(0,0);
+	Point Q=Point(0,0);
 };
 
 class Circle : public TwoDShape {
@@ -172,14 +173,13 @@ public:
 
 	bool setDepth(int d);
 	int getDepth() const;
-	int dim() const;
 	void translate(float x, float y);
 	void rotate();
 	void scale(float f);
 	bool contains(const Point& p) const;
 
 private:
-	Point centre;
+	Point centre=Point(0,0);
 	float radius;
 };
 

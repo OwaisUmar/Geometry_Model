@@ -5,18 +5,17 @@ using namespace std;
 
 // ============ Shape class =================
 
+Shape::Shape() {}
+
 Shape::Shape(int d) {
 	if(d<0) 
 		throw invalid_argument("Depth cannot be negative.\n");
 }
 
 // =============== Point class ================
-
-Point::Point(float x, float y, int d) {
-	X=x;
-	Y=y;
+// Point::Point() {}
+Point::Point(float x, float y, int d) : Shape(d), X(x), Y(y) {
 	setDepth(d);
-	dimension=0;
 }
 
 bool Point::setDepth(int d) {
@@ -30,7 +29,7 @@ int Point::getDepth() const {
 }
 
 int Point::dim() const {
-	return dimension;
+	return 0;
 }
 
 void Point::translate(float x, float y) {
@@ -70,11 +69,10 @@ LineSegment::LineSegment(const Point& p, const Point& q) {
 		throw invalid_argument("Different depths not allowed");
 	if(p.getX()==q.getX() && p.getY()==q.getY())
 		throw invalid_argument("Same coordinates not allowed");
-	if(p.getX()!=q.getX() || p.getY()!=q.getY())
+	if(p.getX()!=q.getX() && p.getY()!=q.getY())
 		throw invalid_argument("Line is not axis aligned");
 	P=p;
 	Q=q;
-	dimension=1;
 }
 
 
@@ -96,7 +94,7 @@ float LineSegment::getYmax() const {
 }
 
 float LineSegment::length() const {
-	if(P.getX()==P.getX())
+	if(P.getX()==Q.getX())
 		return abs(P.getY()-Q.getY());
 	else	
 		return abs(P.getX()-Q.getX());
@@ -113,7 +111,7 @@ int LineSegment::getDepth() const {
 }
 
 int LineSegment::dim() const {
-	return dimension;
+	return 1;
 }
 
 void LineSegment::translate(float x, float y) {
@@ -164,7 +162,10 @@ TwoDShape::TwoDShape(){}
 
 TwoDShape::TwoDShape(int d) {
 	depth=d;
-	dimension=2;
+}
+
+int TwoDShape::dim() const {
+	return 2;
 }
 
 // ============== Rectangle class ================
@@ -208,10 +209,6 @@ bool Rectangle::setDepth(int d) {
 
 int Rectangle::getDepth() const {
 	return depth;
-}
-
-int Rectangle::dim() const {
-	return dimension;
 }
 
 void Rectangle::translate(float x, float y) {
@@ -310,10 +307,6 @@ bool Circle::setDepth(int d) {
 
 int Circle::getDepth() const {
 	return depth;
-}
-
-int Circle::dim() const {
-	return dimension;
 }
 
 void Circle::translate(float x, float y) {
