@@ -22,6 +22,7 @@ bool Point::setDepth(int d) {
 	if(d<0)
 		return false;
 	depth=d;	
+	return true;
 }
 
 int Point::getDepth() const {
@@ -42,7 +43,8 @@ void Point::rotate() {
 }
 
 void Point::scale(float f) {
-	
+	if(f<=0)
+		throw invalid_argument("f can't be zero.");
 }
 
 bool Point::contains(const Point& p) const {
@@ -73,6 +75,7 @@ LineSegment::LineSegment(const Point& p, const Point& q) {
 		throw invalid_argument("Line is not axis aligned");
 	P=p;
 	Q=q;
+	depth=p.getDepth();
 }
 
 
@@ -103,7 +106,8 @@ float LineSegment::length() const {
 bool LineSegment::setDepth(int d) {
 	if(d<0)
 		return false;
-	depth=d;	
+	depth=d;
+	return true;	
 }
 
 int LineSegment::getDepth() const {
@@ -123,12 +127,12 @@ void LineSegment::rotate() {
 	if(P.getX()==Q.getX()) {
 		float diff=(getYmax()-getYmin())/2;
 		P=Point((P.getX()+diff), (P.getY()+diff));
-		Q=Point((Q.getX()-diff), (P.getY()+diff));
+		Q=Point((Q.getX()-diff), (P.getY()));
 	}
 	else if(P.getY()==Q.getY()) {
 		float diff=(getXmax()-getXmin())/2;
 		P=Point((P.getX()+diff), (P.getY()+diff));
-		Q=Point((Q.getX()+diff), (P.getY()-diff));
+		Q=Point((P.getX()), (Q.getY()-diff));
 	}
 }
 
@@ -139,14 +143,14 @@ void LineSegment::scale(float f) {
 		float dist=(getYmax()-getYmin());
 		float a=(dist/2)*(f-1);
 		P=Point(P.getX(), getYmax()+a);
-		Q=Point(Q.getX(), getYmin()-a);
-		
+		Q=Point(Q.getX(), getYmin()-a);	
 	}
+
 	else if(P.getY()==Q.getY()) {
 		float dist=(getXmax()-getXmin());
 		float a=(dist/2)*(f-1);
 		P=Point(getXmax()+a, P.getY());
-		Q=Point(getXmin()-a, Q.getX());
+		Q=Point(getXmin()-a, Q.getY());
 	}
 }
 
@@ -179,6 +183,7 @@ Rectangle::Rectangle(const Point& p, const Point& q) {
 		throw invalid_argument("Points can't be on the same horizontal/vertical line");
 	P=p;
 	Q=q;
+	depth=p.getDepth();
 }
 
 float Rectangle::getXmin() const {
@@ -205,6 +210,7 @@ bool Rectangle::setDepth(int d) {
 	if(d<0)
 		return false;
 	depth=d;	
+	return true;
 }
 
 int Rectangle::getDepth() const {
@@ -250,22 +256,26 @@ void Rectangle::scale(float f) {
 	float H=getYmax()-getYmin();		
 	float a=(W/2)*(f-1);
 	float b=(H/2)*(f-1);
+	Point X=Point(0, 0);
+	Point Y=Point(0, 0);
 	if(P.getX() == getXmax() && P.getY() == getYmax()) {
-		P=Point(P.getX()+a, P.getY()+b);
-		Q=Point(P.getX()-a, P.getY()-b);
+		X=Point(P.getX()+a, P.getY()+b);
+		Y=Point(Q.getX()-a, Q.getY()-b);
 	}
 	else if(P.getX() == getXmax() && P.getY() == getYmin()) {
-		P=Point(P.getX()+a, P.getY()-b);
-		Q=Point(P.getX()-a, P.getY()+b);
+		X=Point(P.getX()+a, P.getY()-b);
+		Y=Point(Q.getX()-a, Q.getY()+b);
 	}
 	else if(P.getX() == getXmin() && P.getY() == getYmax()) {
-		P=Point(P.getX()-a, P.getY()+b);
-		Q=Point(P.getX()+a, P.getY()-b);
+		X=Point(P.getX()-a, P.getY()+b);
+		Y=Point(Q.getX()+a, Q.getY()-b);
 	}
 	else if(P.getX() == getXmin() && P.getY() == getYmin()) {
-		P=Point(P.getX()-a, P.getY()-b);
-		Q=Point(P.getX()+a, P.getY()+b);
+		X=Point(P.getX()-a, P.getY()-b);
+		Y=Point(Q.getX()+a, Q.getY()+b);
 	}
+	P=X;
+	Q=Y;
 }
 
 bool Rectangle::contains(const Point& p) const {
@@ -281,6 +291,7 @@ Circle::Circle(const Point& c, float r) {
 		throw invalid_argument("Radius cannot be 0 or negative");
 	radius=r;
 	centre=c;
+	setDepth(c.getDepth());
 }
 
 float Circle::getX() const {
@@ -303,6 +314,7 @@ bool Circle::setDepth(int d) {
 	if(d<0)
 		return false;
 	depth=d;	
+	return true;
 }
 
 int Circle::getDepth() const {
@@ -318,6 +330,8 @@ void Circle::rotate() {
 
 
 void Circle::scale(float f) {
+	if(f<=0)
+		throw invalid_argument("f can't be zero.");
 	radius=radius*f;
 }
 
@@ -339,23 +353,28 @@ void Scene::addObject(std::shared_ptr<Shape> ptr) {
 }
 
 void Scene::setDrawDepth(int depth) {
-	Depth=depth;
+	drawDepth=depth;
 }
 
 std::ostream& operator<<(std::ostream& out, const Scene& s) {
-	for(auto i : s.V) {
-		int x=0, y=s.HEIGHT-1;
-		while(y>=0) {
-			if(i->contains(Point(x, y)))
+	int x=0, y=s.HEIGHT-1;
+	while(y>=0) {
+		int flag=0;
+		for(auto i:s.V) { 
+			if(i->contains(Point(x, y)) && (i->getDepth()<=s.drawDepth || s.drawDepth==-1)) {
 				out<<'*';
-			x++;
-			if(x==s.WIDTH) {
-				out<<endl;
-				x=0;
-				y--;
+				flag=1;
+				break;
 			}
+		}	
+		if(!flag)
+			out<<" ";
+		x++;
+		if(x==s.WIDTH) {
+			out<<endl;
+			x=0;
+			y--;
 		}
-		
 	}
 		
 	return out;

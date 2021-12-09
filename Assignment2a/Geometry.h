@@ -156,6 +156,7 @@ public:
 private:
 	Point P=Point(0,0);
 	Point Q=Point(0,0);
+	
 };
 
 class Circle : public TwoDShape {
@@ -203,7 +204,7 @@ public:
 private:
 	// add any member variables you need
 	std::vector<std::shared_ptr<Shape>> V;
-	int Depth;
+	int drawDepth=-1;
 
 	// Draw objects as specified in the assignment page
 friend std::ostream& operator<<(std::ostream& out, const Scene& s);
