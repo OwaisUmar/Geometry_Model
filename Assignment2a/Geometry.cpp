@@ -1,4 +1,3 @@
-#include<math.h>
 #include<vector>
 #include "Geometry.h"
 using namespace std;
@@ -13,7 +12,7 @@ Shape::Shape(int d) {
 }
 
 // =============== Point class ================
-// Point::Point() {}
+
 Point::Point(float x, float y, int d) : Shape(d), X(x), Y(y) {
 	setDepth(d);
 }
@@ -38,9 +37,7 @@ void Point::translate(float x, float y) {
 	Y=Y+y;
 }
 
-void Point::rotate() {
-
-}
+void Point::rotate() {}
 
 void Point::scale(float f) {
 	if(f<=0)

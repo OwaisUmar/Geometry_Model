@@ -10,191 +10,139 @@ class Point; // forward declaration
 class Shape {
 
 public:
-	// Default constructor, just to make this release version compilable.
-	// If your implementation is correct this should be removed
 	Shape();
-
-	// Constructor specifying the depth of the object.
-	// If d is negative, throw a std::invalid_argument exception.
+	
 	Shape(int d);
 
-	// Set depth of object to d. If d is negative, return false and
-	// do not update depth. Otherwise return true
-	virtual bool setDepth(int d)=0;
+	virtual bool setDepth(int d) = 0;
+	virtual int getDepth() const = 0;
+	virtual int dim() const = 0;
+	virtual void translate(float x, float y) = 0;
+	virtual void rotate() = 0;
+	virtual void scale(float f) = 0;
+	virtual bool contains(const Point& p) const = 0;
 
-	// Return the depth of object
-	virtual int getDepth() const=0;
-
-	// Return the dimension of the object (0, 1 or 2)
-	virtual int dim() const=0;
-
-	// Translate the object horizontally by x and vertically by y
-	virtual void translate(float x, float y)=0;
-
-	// Rotate the object 90 degrees around its centre
-	virtual void rotate()=0;
-
-	// Scale the object by a factor f relative to its centre.
-	// If f is zero or negative, throw a std::invalid-argument exception.
-	virtual void scale(float f)=0;
-
-	// Return true if the object contains p and false otherwise.
-	// Depths are ignored for purpose of comparison
-	virtual bool contains(const Point& p) const=0;
-
-	// the constant pi
 	static constexpr double PI = 3.1415926;
 
 protected:
-	int depth;
-private:
-	// add any protected/private member variables you need
+	int depth;	//to store the depth of the object
 };
 
-class Point : public Shape {
+class Point final : public Shape {
 
 public:
-	Point();
-
-	// Constructor. Depth defaults to 0
-	Point(float x, float y, int d=0);
+	Point(float x, float y, int d = 0);
 	
-	bool setDepth(int d);
-	int getDepth() const;
-	int dim() const;
-	void translate(float x, float y);
-	void rotate();
-	void scale(float f);
-	bool contains(const Point& p) const;
+	bool setDepth(int d) override final;
+	int getDepth() const override final;
+	int dim() const override final;
+	void translate(float x, float y) override final;
+	void rotate() override final;
+	void scale(float f) override final;
+	bool contains(const Point& p) const override final;
 
-	// Return basic information (see assignment page)
 	float getX() const;
 	float getY() const;
 
 private:
-	// add any member variables you need
-	int X;
-	int Y;
+	float X;	//to store the x-coordinate of the point 
+	float Y;	//to store the y-coordinate of the point
 };
 
-class LineSegment : public Shape {
+class LineSegment final: public Shape {
 
 public:
-	// Constructor.
-	// If the two points have different depths, or have the same x- and
-	// y-coordinate, or if the line is not axis-aligned, throw a
-	// std::invalid_argument exception
 	LineSegment(const Point& p, const Point& q);
 
-	// Return basic information (see assignment page)
 	float getXmin() const;
 	float getXmax() const;
 	float getYmin() const;
 	float getYmax() const;
-
-	// Return the length of the line segment
 	float length() const;
 
-	bool setDepth(int d);
-	int getDepth() const;
-	int dim() const;
-	void translate(float x, float y);
-	void rotate();
-	void scale(float f);
-	bool contains(const Point& p) const;
+	bool setDepth(int d) override final;
+	int getDepth() const override final;
+	int dim() const override final;
+	void translate(float x, float y) override final;
+	void rotate() override final;
+	void scale(float f) override final;
+	bool contains(const Point& p) const override final;
 
 private:
-	Point P=Point(0, 0);
-	Point Q=Point(0, 0);
-	// add any member variables you need
-	
+	//variables to store the endpoints of the line segment
+	Point P = Point(0, 0);
+	Point Q = Point(0, 0);
 };
 
 class TwoDShape : public Shape {
 
 public:
-	// Default constructor.
-	// Similar comment to Student default constructor applies
 	TwoDShape();
 
-	// Constructor specifying the depth d
 	TwoDShape(int d);
-
 	
-	int dim() const;
-
-	// Return the area of the object
+	int dim() const override final;
+	
 	virtual float area() const = 0;
-
-protected:
-private:
-	// add any protected/private member variables you need
 };
 
-class Rectangle : public TwoDShape {
+class Rectangle final : public TwoDShape {
 
 public:
-	// Constructor.
-	// If the two points have different depths, or have the same x-
-	// and/or y-coordinate, throw a std::invalid_argument exception
 	Rectangle(const Point& p, const Point& q);
 
-	// Return basic information (see assignment page)
 	float getXmin() const;
 	float getYmin() const;
 	float getXmax() const;
 	float getYmax() const;
-	float area() const;
 
-	bool setDepth(int d);
-	int getDepth() const;
-	void translate(float x, float y);
-	void rotate();
-	void scale(float f);
-	bool contains(const Point& p) const;
+	float area() const override;
+
+	bool setDepth(int d) override final;
+	int getDepth() const override final;
+	void translate(float x, float y) override final;
+	void rotate() override final;
+	void scale(float f) override final;
+	bool contains(const Point& p) const override final;
 
 private:
-	Point P=Point(0,0);
-	Point Q=Point(0,0);
+	//variables to store the corner points of the rectangle
+	Point P = Point(0, 0);
+	Point Q = Point(0, 0);
 	
 };
 
-class Circle : public TwoDShape {
+class Circle final : public TwoDShape {
 
 public:
-	// Constructor.
-	// If r is zero or negative, throw a std::invalid-argument exception.
 	Circle(const Point& c, float r);
 
-	// Return basic information (see assignment page)
 	float getX() const;
 	float getY() const;
 	float getR() const;
-	float area() const;
 
-	bool setDepth(int d);
-	int getDepth() const;
-	void translate(float x, float y);
-	void rotate();
-	void scale(float f);
-	bool contains(const Point& p) const;
+	float area() const override final;
+
+	bool setDepth(int d) override final;
+	int getDepth() const override final;
+	void translate(float x, float y) override final;
+	void rotate() override final;
+	void scale(float f) override final;
+	bool contains(const Point& p) const override final;
 
 private:
-	Point centre=Point(0,0);
-	float radius;
+	Point centre = Point(0, 0);	//to store the coordinates of centre of circle
+	float radius;				//to store the radius of the circle
 };
 
 
 class Scene {
 
 public:
-	// Constructor
 	Scene();
-
-	// Add the pointer to the collection of pointers stored
+	
 	void addObject(std::shared_ptr<Shape> ptr);
 
-	// Set the drawing depth to d
 	void setDrawDepth(int d);
 
 	// Constants specifying the size of the drawing area
@@ -202,12 +150,11 @@ public:
 	static constexpr int HEIGHT = 20;
 
 private:
-	// add any member variables you need
-	std::vector<std::shared_ptr<Shape>> V;
-	int drawDepth=-1;
+	std::vector<std::shared_ptr<Shape>> pointerVector;	//vector to store the shared pointers
+	int drawDepth = -1;									//to specify the drawing depth
 
-	// Draw objects as specified in the assignment page
 friend std::ostream& operator<<(std::ostream& out, const Scene& s);
+
 };
 
 #endif /* GEOMETRY_H_ */

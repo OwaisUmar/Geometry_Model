@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Geometry.h"
-#include "Geometry.cpp"
+// #include "Geometry.cpp"
 using namespace std;
 
 int main() {
@@ -49,17 +49,5 @@ int main() {
 	rp->rotate();
 	cp->translate(0,-5);
 	cout << s;
-
-	// Point p1(1,2);
-	// Point p2(5,2);
-	// Point p3(5,4);
-	// LineSegment l1(p1,p2);
-	// LineSegment l2(p2,p3);
-	// l1.rotate();
-	// l2.rotate();
-	// cout<<l1.getXmin()<<", "<<l1.getXmax()<<endl;
-	// cout<<l1.getYmin()<<", "<<l1.getYmax()<<endl;
-	// cout<<l2.getXmin()<<", "<<l2.getXmax()<<endl;
-	// cout<<l2.getYmin()<<", "<<l2.getYmax()<<endl;
 
 }
