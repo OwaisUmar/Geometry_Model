@@ -70,8 +70,8 @@ public:
 
 private:
 	//variables to store the endpoints of the line segment
-	Point P = Point(0, 0);
-	Point Q = Point(0, 0);
+	Point P = Point(0,0);
+	Point Q = Point(0,0);
 };
 
 class TwoDShape : public Shape {
@@ -107,9 +107,12 @@ public:
 
 private:
 	//variables to store the corner points of the rectangle
-	Point P = Point(0, 0);
-	Point Q = Point(0, 0);
-	
+	Point P = Point(0,0);
+	Point Q = Point(0,0);
+
+	//functions to get the width and height of the rectangle
+	float get_width() const;	
+	float get_height() const;
 };
 
 class Circle final : public TwoDShape {
@@ -131,7 +134,7 @@ public:
 	bool contains(const Point& p) const override final;
 
 private:
-	Point centre = Point(0, 0);	//to store the coordinates of centre of circle
+	Point centre = Point(0,0);	//to store the centre coordinates of the circle
 	float radius;				//to store the radius of the circle
 };
 
@@ -150,7 +153,7 @@ public:
 	static constexpr int HEIGHT = 20;
 
 private:
-	std::vector<std::shared_ptr<Shape>> pointerVector;	//vector to store the shared pointers
+	std::vector<std::shared_ptr<Shape>> pointersVector;	//vector to store the shared pointers
 	int drawDepth = -1;									//to specify the drawing depth
 
 friend std::ostream& operator<<(std::ostream& out, const Scene& s);

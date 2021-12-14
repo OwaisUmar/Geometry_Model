@@ -3,6 +3,8 @@
         "cstdlib": "cpp",
         "cmath": "cpp",
         "iostream": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "iosfwd": "cpp",
+        "stdexcept": "cpp"
     }
 }
