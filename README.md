@@ -1,5 +1,6 @@
-### Overview and the class hierarchy
+# Coordinate Geometry Model
 
+### Overview and the class hierarchy
 A number of different classes are used to model different geometric shapes, all
 derived from a common base class called Shape. The class hierarchy is as shown in
 this diagram:
@@ -160,3 +161,61 @@ support the following operations:
 - float getX(): return the x-coordinate of the centre.
 - float getY(): return the y-coordinate of the centre.
 - float getR(): return the radius.
+
+### The Scene class
+This class stores a collection of shared pointers to some Shape objects, so that the
+objects can be "drawn" on the screen. It should support the following operations:
+`void addObject(shared_ptr<Shape> p);`
+Add the shared pointer p that points to some Shape (or its subclasses) object to
+this Scene object. After the call, the pointer p (and the object that it points to) must
+remain "intact", and both the caller of this function and this Scene object share the
+"ownership" of the object being pointed to. In other words, any changes made to
+one of them is reflected in the other. For example, in the following code:
+`shared_ptr<Rectangle> rp = make_shared<Rectangle>(...);`
+`Scene s;`
+`s.addObject(rp);`
+`rp->translate(1,2);`
+
+- After the rectangle pointed to by rp is translated, the rectangle added to s is
+translated as well.
+- `void setDrawDepth(int d);`
+Set the "drawing depth" to d, which means that when operator<< is called
+(see the next bullet point), it draws all objects at depth d or less. For
+example, if d=2, it draws all objects with depth 0, 1, 2, but not those with
+depth 3, 4, 5, etc. If this function is never called, operator<< should draw all
+objects of any depth.
+
+`ostream& operator<<(ostream& out, const Scene& s);`
+Overloaded output stream redirection operator, to be implemented as a friend
+function (not a member function) of this class. It "draws" all objects to the screen,
+as follows. There is a rectangular "drawing area" of size defined in the constants
+WIDTH and HEIGHT in the Scene class. This function outputs to the stream a
+number of lines equal to HEIGHT, where each line has exactly WIDTH characters.
+
+These lines are joined by the newline ('\n') character, and the final line is followed
+by a newline character as well. The j-th line from the **bottom**, and the i-th
+character from the left in this line (count starts from 0), correspond to the point
+with integer coordinates (i,j). That is, the rectangular area corresponds to the
+coordinates from (0,0) in the bottom left, to (WIDTH-1, HEIGHT-1) in the top right.
+Each character in the above lines is the character '*', if the corresponding integer
+coordinates (i,j) is inside part of any object (as defined by the contains()
+function) and that object has depth no more than the drawing depth (see previous
+bullet point); otherwise it is the blank space ' ' character.
+Effectively, all objects of different depths (that are at most the drawing depth) are
+"overlayed" on top of each other. Also note that some objects may be partially or
+wholly outside of the drawing area, and they (or those parts) are not drawn.
+For example, with the default WIDTH and HEIGHT values of 20 and 60, a scene with
+a point (0,0), a line segment with endpoints (0,19) and (59,19), a rectangle with
+opposite corners (59,0) and (55,19), and a circle with centre (30,0) and radius 10,
+all with depth 0, may be drawn like this if the drawing depth is also 0:
+
+![image](https://user-images.githubusercontent.com/62874437/206820722-56ae95cd-01c0-4e12-a23b-5822703f817d.png)
+
+- (yes, I know it doesn't look like a semi-circle...) Due to the floating point
+nature of the coordinates, this function will have the interesting "feature"
+that it only draws things with integer coordinates; for example a line
+segment between (1,1) and (1,5) will be drawn, while one between (1.5, 1)
+and (1.5, 5) will not.
+
+In all places that require comparing floating point values, you can ignore the issue
+of floating-point inaccuracies. That is, you can just compare two floats with x==y.
